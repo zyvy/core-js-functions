@@ -188,10 +188,17 @@ function retry(func, attempts) {
  * cos(3.141592653589793) ends
  *
  */
-function logger(/* func, logFunc */) {
-  throw new Error('Not implemented');
+function logger(func, logFunc) {
+  return (...args) => {
+    const arg = args.join(',');
+    logFunc(`${func.name}(${arg}) starts`);
+    const a = func(args);
+    logFunc(`${func.name}(${arg}) ends`);
+    return a;
+  };
 }
-
+// const cosLogger = logger(Math.cos, console.log);
+// const result = cosLogger(Math.PI);     // -1
 /**
  * Return the function with partial applied arguments
  *
@@ -205,9 +212,18 @@ function logger(/* func, logFunc */) {
  *   partialUsingArguments(fn, 'a','b','c')('d') => 'abcd'
  *   partialUsingArguments(fn, 'a','b','c','d')() => 'abcd'
  */
-function partialUsingArguments(/* fn, ...args1 */) {
-  throw new Error('Not implemented');
+function partialUsingArguments(fn, ...args1) {
+  const args = [...args1];
+  return (...args2) => {
+    const args3 = [...args, ...args2];
+    return fn(...args3);
+  };
 }
+
+/* const fn = function (x1, x2, x3, x4) {
+  return x1 + x2 + x3 + x4;
+}; */
+// console.log(partialUsingArguments(fn, 'a')('b', 'c', 'd'));
 
 /**
  * Returns the id generator function that returns next integer starting
@@ -226,8 +242,12 @@ function partialUsingArguments(/* fn, ...args1 */) {
  *   getId4() => 7
  *   getId10() => 11
  */
-function getIdGeneratorFunction(/* startFrom */) {
-  throw new Error('Not implemented');
+function getIdGeneratorFunction(startFrom) {
+  let id = startFrom - 1;
+  return () => {
+    id += 1;
+    return id;
+  };
 }
 
 module.exports = {
