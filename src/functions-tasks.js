@@ -190,13 +190,15 @@ function retry(func, attempts) {
  */
 function logger(func, logFunc) {
   return (...args) => {
-    const arg = args.join(',');
-    logFunc(`${func.name}(${arg}) starts`);
-    const a = func(args);
-    logFunc(`${func.name}(${arg}) ends`);
-    return a;
+    const argsAr = args.map((arg) => JSON.stringify(arg));
+    logFunc(`${func.name}(${argsAr.join(',')}) starts`);
+    const result = func(...args);
+    logFunc(`${func.name}(${argsAr.join(',')}) ends`);
+
+    return result;
   };
 }
+
 // const cosLogger = logger(Math.cos, console.log);
 // const result = cosLogger(Math.PI);     // -1
 /**
